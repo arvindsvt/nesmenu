@@ -55,15 +55,13 @@ if ( isset($_POST['source']) )
 {
     $source         = $_POST['source'];
     $destination    = isset($_POST['destination']) ? $_POST['destination'] : 0;
-    $ordering       = isset($_POST['order']) ? json_decode($_POST['order']) : '';
-    $rootOrdering   = isset($_POST['rootOrder']) ? json_decode($_POST['rootOrder']) : '';
+    $orders         = isset($_POST['order']) ? json_decode($_POST['order']) : '';
     
     $res = $db->prepare("update menu set pid='$destination' where id='$source'")->execute();
     if (!$res) {
 	print_message(0, '更改分类错误！');
     }
 
-    $orders = $ordering ? $ordering : $rootOrdering;
     $statement = $db->prepare("update menu set sort=:sort where id=:id"); 
     foreach($orders as $sort => $id){
         $statement->bindParam(':sort', $sort);

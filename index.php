@@ -20,6 +20,7 @@ $menu = getMenu();
 	<div class="col-md-8">  
 	    <div class="well">
 		<p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal"><span class="glyphicon glyphicon-plus-sign"></span>新建菜单</a> 菜单：</p>
+                <p id="ppp"></p>
 		<div class="dd" id="nestable">
 		    <?php echo $menu; ?>
 		</div>
@@ -154,41 +155,44 @@ $menu = getMenu();
 $(function() {
     // 提交链接
     var submit_url = 'save.php';
-    
+//    $('#ppp').html('内容：' + JSON.stringify($('.dd').nestable('serialize')));
     // 更改顺序和父目录时处理
     $('.dd').nestable({
-      dropCallback: function(details) {
+        maxDepth: 3,
+        dropCallback: function(details) {
 
-	 var order = new Array();
-	 $("li[data-id='"+details.destId +"']").find('ol:first').children().each(function(index,elem) {
-	   order[index] = $(elem).attr('data-id');
-	 });
+            var order = new Array();
+            $("li[data-id='"+details.destId +"']").find('ol:first').children().each(function(index,elem) {
+                order[index] = $(elem).attr('data-id');
+            });
 
-	 if (order.length === 0){
-	  var rootOrder = new Array();
-	  $("#nestable > ol > li").each(function(index,elem) {
-	    rootOrder[index] = $(elem).attr('data-id');
-	  });
-	 }
-
-	 $.post(
-                submit_url,
-                {
-                    source : details.sourceId,
-                    destination: details.destId,
-                    order:JSON.stringify(order),
-                    rootOrder:JSON.stringify(rootOrder)
-                },
-                function(result) {
-                    var node = $("li[data-id='"+ details.sourceId +"']").find(".pull-right");
-                    var indicator = $("<span class='tips-msg'>" + result.message + "</span>");
-                    indicator.insertBefore(node).fadeIn(100).delay(1000).fadeOut();
-                },
-                'json').fail(function(result){
-                    alert("失败：" + result.status + "：" + result.message);
-                    return ;
+            if (order.length === 0){
+                var order = new Array();
+                $("#nestable > ol > li").each(function(index,elem) {
+                    order[index] = $(elem).attr('data-id');
                 });
-       }
+            }
+//            $('#ppp').html( JSON.stringify(order) );
+//           $('#ppp').html( JSON.stringify($('.dd').nestable('serialize')) );
+   
+            $.post(
+                    submit_url,
+                    {
+                        source : details.sourceId,
+                        destination: details.destId,
+                        order: JSON.stringify(order)
+                    },
+                    function(result) {
+                        var node = $("li[data-id='"+ details.sourceId +"']").find(".pull-right");
+                        var indicator = $("<span class='tips-msg'>" + result.message + "</span>");
+                        indicator.insertBefore(node).fadeIn(100).delay(1000).fadeOut();
+                    },
+                    'json'
+            ).fail(function(result){
+                alert("失败：" + result.status + "：" + result.message);
+                return ;
+            });
+        }
      });
 
     // 新建、修改、删除功能通过Ajax提交
@@ -207,10 +211,11 @@ $(function() {
                         return;
                     }
                 },
-                'json').fail(function(result){
-                    alert("失败：" + result.status + "：" + result.message);
-                    return ;
-                });
+                'json'
+        ).fail(function(result){
+            alert("失败：" + result.status + "：" + result.message);
+            return ;
+        });
     });
 
     // 点击编辑按钮时，加载 要删除的menu id
