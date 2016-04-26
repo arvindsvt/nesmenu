@@ -1,30 +1,7 @@
-<?php
-$db = new PDO('mysql:host=localhost;dbname=shopdb', 'root', 'root');
-$menus = $db->query("select * from menu")->fetchAll(PDO::FETCH_ASSOC);
+﻿<?php
+include 'save.php';
 
-function buildMenu($menu, $parentid = 0) 
-{ 
-  $result = null;
-  foreach ($menu as $item) 
-      
-    if ($item['parent_id'] == $parentid) {
-	$item_json = json_encode($item);
-	$result .= "<li class='dd-item nested-list-item' data-order='{$item['order']}' data-id='{$item['id']}'>
-      <div class='dd-handle nested-list-handle'>
-	<span class='glyphicon glyphicon-move'></span>
-      </div>
-      <div class='nested-list-content'>{$item['title']}
-	<div class='pull-right'>
-	  <a href='#editModal' class='edit_toggle' rel='{$item_json}'  data-toggle='modal'>编辑</a> |
-	  <a href='#deleteModal' class='delete_toggle' rel='{$item['id']}' data-toggle='modal'>删除</a>
-	</div>
-      </div>" . buildMenu($menu, $item['id']) . "</li>";
-    } 
-  return $result ?  "\n<ol class=\"dd-list\">\n$result</ol>\n" : null; 
-} 
-
-$menu = buildMenu($menus);
-
+$menu = getMenu();
 ?>
 <html>
 <head>
@@ -76,15 +53,21 @@ $menu = buildMenu($menus);
 			    </div>
 			</div>
 			<div class="form-group">
-			    <label for="label" class="col-lg-2 control-label">Label</label>
+			    <label for="icon" class="col-lg-2 control-label">图标</label>
 			    <div class="col-lg-10">
-				<input type="text" name="label" value="" class="form-control" />
+				<input type="text" name="icon" value="" class="form-control" />
 			    </div>
 			</div>
 			<div class="form-group">
 			    <label for="url" class="col-lg-2 control-label">URL</label>
 			    <div class="col-lg-10">
 				<input type="text" name="url" value="" class="form-control" />
+			    </div>
+			</div>
+                        <div class="form-group">
+			    <label for="hide" class="col-lg-2 control-label"></label>
+			    <div class="col-lg-10">
+                                <input type="checkbox" name="hide" value="0" class="checkbox-inline" />隐藏
 			    </div>
 			</div>
 		    </div>
@@ -117,9 +100,9 @@ $menu = buildMenu($menus);
 			    </div>
 			</div>
 			<div class="form-group">
-			    <label for="label" class="col-lg-2 control-label">Label</label>
+			    <label for="icon" class="col-lg-2 control-label">图标</label>
 			    <div class="col-lg-10">
-				<input type="text" name="label" value="" class="form-control" />
+				<input type="text" name="icon" value="" class="form-control" />
 			    </div>
 			</div>
 			<div class="form-group">
@@ -129,6 +112,12 @@ $menu = buildMenu($menus);
 			    </div>
 			</div>
 		    </div>
+                    <div class="form-group">
+			    <label for="hide" class="col-lg-2 control-label"></label>
+			    <div class="col-lg-10">
+                                <input type="checkbox" name="hide" value="0" class="checkbox-inline" />隐藏
+			    </div>
+			</div>
 		    <div class="modal-footer">
 			<span class="success-msg text-success" style="display:none;"></span>
 			<span class="fail-msg text-danger" style="display:none;"></span>
@@ -176,7 +165,7 @@ $menu = buildMenu($menus);
 <script type="text/javascript">
 $(function() {
     
-    var submit_page = 'save.php';
+    var submit_url = 'save.php';
     
     $('.dd').nestable({ 
       dropCallback: function(details) {
@@ -193,7 +182,7 @@ $(function() {
 	  });
 	 }
 
-	 $.post(submit_page, 
+	 $.post(submit_url, 
 	  {
 	      source : details.sourceId,
 	      destination: details.destId,
@@ -201,7 +190,7 @@ $(function() {
 	      rootOrder:JSON.stringify(rootOrder) 
 	  }, 
 	  function(data) {
-	 //   console.log('data '+data); 
+//              $("li[data-id='"+details.destId +"']").attr({'data-content':data.message, 'data-toggle':"popover"}).popover();
 	  })
 	 .done(function() { 
 	    $( "#success-indicator" ).fadeIn(100).delay(1000).fadeOut();
@@ -217,15 +206,15 @@ $(function() {
 	e.preventDefault();
 	var form = $(this);
 	
-	$.post(submit_page, form.serialize(), function(result){
+	$.post(submit_url, form.serialize(), function(result){
 	    if (result.status) {
-		form.find(".success-msg").html(result.message).fadeIn(100).delay(1500).fadeOut();
-		location.reload();
+		form.find(".success-msg").html(result.message).fadeIn(100).delay(1000).fadeOut();
+		setTimeout(function(){location.reload();}, 1000);
 	    } else {
-		form.find(".fail-msg").html(result.message).fadeIn(100).delay(1500).fadeOut();
+		form.find(".fail-msg").html(result.message).fadeIn(100).delay(1000).fadeOut();
 		return;
 	    }
-	}, 'json');
+	}, 'json').fail(function(result){alert("失败：" + result.status + "：" + result.message);return ;});
     });
 
     // 点击编辑按钮时，加载 要删除的menu id
@@ -239,10 +228,21 @@ $(function() {
 	  e.preventDefault();
 	  var menu = JSON.parse( $(this).attr('rel') );
 	  $.each(menu, function(key, value) {
-	      $('#editModal').find('input[name='+key+']').val(value);
+	      $('#editModal').find('input[type=text][name='+key+']').val(value);
+              $('#editModal').find('input[type=checkbox][name='+key+']').attr('checked', (value==1)?true:false);
 	  });
     });
 
+    // 复选框
+    $('input[type=checkbox]').click(function(){
+        var self = $(this);
+        if ( self.is(':checked') === true) {
+            self.val(1);
+        } else {
+            self.val(0);
+        }
+        
+    });
 });
 </script>
 

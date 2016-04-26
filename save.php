@@ -1,33 +1,15 @@
-<?php
-$db = new PDO('mysql:host=localhost;dbname=shopdb', 'root', 'root');
-
-/**
- * 返回 ajax 数据
- * @param bool $status 状态，0-失败，1-成功
- * @param string $message 提示信息
- */
-function print_message($status = 0, $message = '')
-{
-    $prompt = array('message' => $message);
-    
-    if ($status) {
-	$prompt['status'] = 1;
-    } else {
-	$prompt['status'] = 0;
-    }
-    
-    echo json_encode($prompt);
-    exit;
-}
+﻿<?php
+$db = new PDO("mysql:host=localhost;dbname=shop;charset=utf8", "root", "root");
 
 // 添加菜单
 if (isset($_POST['add_menu'])) {
     $title  = $_POST['title'];
-    $label  = $_POST['label'];
+    $icon  = $_POST['icon'];
+    $hide  = $_POST['hide'];
     $url    = $_POST['url'];
     
-    $res = $db->prepare("insert into menu (title, label, url) values ('$title', '$label', '$url')")->execute();
-    
+    $res = $db->prepare("insert into menu (title, icon, hide, url) values ('$title', '$icon', '$hide', '$url')")->execute();
+
     if ($res) {
 	print_message(1, '添加菜单成功！');
     } else {
@@ -39,10 +21,11 @@ if (isset($_POST['add_menu'])) {
 if ( isset($_POST['edit_menu']) ) {
     $id	    = $_POST['id'];
     $title  = $_POST['title'];
-    $label  = $_POST['label'];
+    $icon  = $_POST['icon'];
+    $hide  = $_POST['hide'];
     $url    = $_POST['url'];
     
-    $res = $db->prepare("update menu set title='$title', label='$label', url='$url' where id='$id'")->execute();
+    $res = $db->prepare("update menu set title='$title', icon='$icon',hide='$hide', url='$url' where id='$id'")->execute();
     if ($res) {
 	print_message(1, '修改菜单成功！');
     } else {
@@ -54,7 +37,7 @@ if ( isset($_POST['edit_menu']) ) {
 if ( isset($_POST['delete_menu']) ) {
     $id = $_POST['id'];
     
-    $res = $db->query("select * from menu where parent_id='$id'")->fetch(PDO::FETCH_ASSOC);
+    $res = $db->query("select * from menu where pid='$id'")->fetch(PDO::FETCH_ASSOC);
     if ($res) {
 	print_message(0, '菜单下有子菜单，无法删除！');
     }
@@ -70,31 +53,76 @@ if ( isset($_POST['delete_menu']) ) {
 // 拖动编辑，ajax处理
 if ( isset($_POST['source']) )
 {
-    $source       = $_POST['source'];
-    $destination  = isset($_POST['destination']) ? $_POST['destination'] : 0;
-
-    $db->prepare("update menu parent_id='$destination' where id='$source'")->execute();
-
-    $ordering       = json_decode($_POST['order']);
-    $rootOrdering   = json_decode($_POST['rootOrder']);
-
-    if($ordering){
-      foreach($ordering as $order=>$item_id){
-	if($itemToOrder = Menu::find($item_id)){
-	    $itemToOrder->order = $order;
-	    $itemToOrder->save();
-	}
-      }
-    } else {
-      foreach($rootOrdering as $order=>$item_id){
-	if($itemToOrder = Menu::find($item_id)){
-	    $itemToOrder->order = $order;
-	    $itemToOrder->save();
-	}
-      }
+    $source         = $_POST['source'];
+    $destination    = isset($_POST['destination']) ? $_POST['destination'] : 0;
+    $ordering       = isset($_POST['order']) ? json_decode($_POST['order']) : '';
+    $rootOrdering   = isset($_POST['rootOrder']) ? json_decode($_POST['rootOrder']) : '';
+    
+    $res = $db->prepare("update menu set pid='$destination' where id='$source'")->execute();
+    if (!$res) {
+	print_message(0, '更改分类错误！');
     }
 
-    return 'ok ';
+    $orders = $ordering ? $ordering : $rootOrdering;
+    $statement = $db->prepare("update menu set sort=:sort where id=:id"); 
+    foreach($orders as $sort => $id){
+        $statement->bindParam(':sort', $sort);
+        $statement->bindParam(':id', $id);
+        $statement->execute();
+    }
+    
+    print_message(1, '顺序更改成功！');
 }
 
-return false;
+/**
+ * 返回 ajax 数据
+ * @param bool $status 状态，0-失败，1-成功
+ * @param string $message 提示信息
+ */
+function print_message($status = 0, $message = '')
+{
+    $prompt = array('status' => $status, 'message' => $message);
+  
+    echo json_encode($prompt);
+    exit;
+}
+
+/**
+ * 从数据库获取menu数据，并递归调用buildMenu生成菜单
+ * @global PDO $db
+ * @return type
+ */
+function getMenu()
+{
+    global $db;
+    $res = $db->query("select * from menu order by sort")->fetchAll(PDO::FETCH_ASSOC);
+
+    return buildMenu($res);
+}
+
+/**
+ * 构造菜单
+ * @param type $menu
+ * @param type $parentid
+ * @return type
+ */
+function buildMenu($menu, $parentid = 0) 
+{ 
+  $result = null;
+  foreach ($menu as $item) 
+      
+    if ($item['pid'] == $parentid) {
+	$item_json = json_encode($item);
+	$result .= "<li class='dd-item nested-list-item' data-order='{$item['sort']}' data-id='{$item['id']}'>
+      <div class='dd-handle nested-list-handle'>
+	<span class='glyphicon glyphicon-move'></span>
+      </div>
+      <div class='nested-list-content'>{$item['title']}<small>[隐藏]</small>
+	<div class='pull-right'>
+	  <a href='#editModal' class='edit_toggle' rel='{$item_json}'  data-toggle='modal'>编辑</a> |
+	  <a href='#deleteModal' class='delete_toggle' rel='{$item['id']}' data-toggle='modal'>删除</a>
+	</div>
+      </div>" . buildMenu($menu, $item['id']) . "</li>";
+    } 
+  return $result ?  "\n<ol class=\"dd-list\">\n$result</ol>\n" : null;
+}
