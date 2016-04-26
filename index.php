@@ -10,6 +10,10 @@ $menu = getMenu();
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/css/styles.css" rel="stylesheet">
   <link href="static/vendor/nestable/nestable.css" rel="stylesheet">
+  <style type="text/css">
+    .tip-hide, .tip-msg {font-size: 0.5em;margin-left: 5px;color: #999;font-weight: 100; }
+    .tip-msg {color: #449d44}
+  </style>
 </head>
 <body>
 
@@ -151,14 +155,14 @@ $menu = getMenu();
 <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
 <script type="text/javascript" src='static/vendor/nestable/jquery.nestable.js'></script>
 
-<script type="text/javascript">
+<script type="text/javascript">   
 $(function() {
     // 提交链接
     var submit_url = 'save.php';
-//    $('#ppp').html('内容：' + JSON.stringify($('.dd').nestable('serialize')));
+    
     // 更改顺序和父目录时处理
     $('.dd').nestable({
-        maxDepth: 3,
+        maxDepth: 5,
         dropCallback: function(details) {
 
             var order = new Array();
@@ -172,9 +176,7 @@ $(function() {
                     order[index] = $(elem).attr('data-id');
                 });
             }
-//            $('#ppp').html( JSON.stringify(order) );
-//           $('#ppp').html( JSON.stringify($('.dd').nestable('serialize')) );
-   
+
             $.post(
                     submit_url,
                     {
@@ -184,7 +186,7 @@ $(function() {
                     },
                     function(result) {
                         var node = $("li[data-id='"+ details.sourceId +"']").find(".pull-right");
-                        var indicator = $("<span class='tips-msg'>" + result.message + "</span>");
+                        var indicator = $("<span class='tip-msg'>" + result.message + "</span>");
                         indicator.insertBefore(node).fadeIn(100).delay(1000).fadeOut();
                     },
                     'json'

@@ -8,9 +8,10 @@ if (isset($_POST['add_menu'])) {
     $hide  = isset($_POST['hide']) ? $_POST['hide'] : 0;
     $url    = $_POST['url'];
     
-    $res = $db->prepare("insert into menu (title, icon, hide, url) values ('$title', '$icon', '$hide', '$url')")->execute();
+    $statement = $db->prepare("insert into menu (title, icon, hide, url) values ('$title', '$icon', '$hide', '$url')");
+    $statement->execute();
 
-    if ($res) {
+    if ($statement->rowCount()) {
 	print_message(1, '添加菜单成功！');
     } else {
 	print_message(0, '添加菜单失败！');
@@ -25,8 +26,10 @@ if ( isset($_POST['edit_menu']) ) {
     $hide  = isset($_POST['hide']) ? $_POST['hide'] : 0;
     $url    = $_POST['url'];
     
-    $res = $db->prepare("update menu set title='$title', icon='$icon', hide='$hide', url='$url' where id='$id'")->execute();
-    if ($res) {
+    $statement = $db->prepare("update menu set title='$title', icon='$icon', hide='$hide', url='$url' where id='$id'");
+    $statement->execute();
+    
+    if ($statement->rowCount()) {
 	print_message(1, '修改菜单成功！');
     } else {
 	print_message(0, '修改菜单失败！');
@@ -42,8 +45,10 @@ if ( isset($_POST['delete_menu']) ) {
 	print_message(0, '菜单下有子菜单，无法删除！');
     }
     
-    $res = $db->prepare("delete from menu where id='$id'")->execute();
-    if ($res) {
+    $statement = $db->prepare("delete from menu where id='$id'");
+    $statement->execute();
+    
+    if ($statement->rowCount()) {
 	print_message(1, '删除菜单成功！');
     } else {
 	print_message(0, '删除菜单失败！');
@@ -57,20 +62,23 @@ if ( isset($_POST['source']) )
     $destination    = isset($_POST['destination']) ? $_POST['destination'] : 0;
     $orders         = isset($_POST['order']) ? json_decode($_POST['order']) : '';
     
-    $res = $db->prepare("update menu set pid='$destination' where id='$source'")->execute();
-    if (!$res) {
-	print_message(0, '更改分类错误！');
-    }
+    $statement = $db->prepare("update menu set pid='$destination' where id='$source'");
+    $statement->execute();
+    $affect = $statement->rowCount();
 
-    $statement = $db->prepare("update menu set sort=:sort where id=:id"); 
+    $statement2 = $db->prepare("update menu set sort=:sort where id=:id"); 
     foreach($orders as $sort => $id){
-        $statement->bindParam(':sort', $sort);
-        $statement->bindParam(':id', $id);
-        $statement->execute();
+        $statement2->bindParam(':sort', $sort);
+        $statement2->bindParam(':id', $id);
+        $statement2->execute();
     }
-
-    print_message(1, '更改成功！');
-
+    $affect2 = $statement2->rowCount();
+    
+    if (!$affect && !$affect2) {
+        print_message(0, '未做更改！');
+    } else {
+        print_message(1, '更改成功！');
+    }
 }
 
 /**
@@ -94,7 +102,7 @@ function print_message($status = 0, $message = '')
 function getMenu()
 {
     global $db;
-    $res = $db->query("select * from menu order by sort")->fetchAll(PDO::FETCH_ASSOC);
+    $res = $db->query("select * from menu order by sort,id desc")->fetchAll(PDO::FETCH_ASSOC);
 
     return buildMenu($res);
 }
@@ -116,8 +124,8 @@ function buildMenu($menu, $parentid = 0)
       <div class='dd-handle nested-list-handle'>
 	<span class='glyphicon glyphicon-move'></span>
       </div>
-      <div class='nested-list-content'>{$item['title']}<small>[隐藏]</small>
-	<div class='pull-right'>
+      <div class='nested-list-content'>{$item['title']}
+	<div class='pull-right'><span class='tip-hide'>[隐藏]</span>
 	  <a href='#editModal' class='edit_toggle' rel='{$item_json}'  data-toggle='modal'>编辑</a> |
 	  <a href='#deleteModal' class='delete_toggle' rel='{$item['id']}' data-toggle='modal'>删除</a>
 	</div>
