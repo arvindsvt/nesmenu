@@ -187,6 +187,7 @@ $(function() {
                     function(result) {
                         $("li[data-id='"+ details.sourceId +"']")
                                 .find(".tip-msg")
+                                .first()
                                 .html(result.message)
                                 .fadeIn(100)
                                 .delay(1000)
