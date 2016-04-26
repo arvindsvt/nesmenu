@@ -5,7 +5,7 @@ $db = new PDO("mysql:host=localhost;dbname=shop;charset=utf8", "root", "root");
 if (isset($_POST['add_menu'])) {
     $title  = $_POST['title'];
     $icon  = $_POST['icon'];
-    $hide  = $_POST['hide'];
+    $hide  = isset($_POST['hide']) ? $_POST['hide'] : 0;
     $url    = $_POST['url'];
     
     $res = $db->prepare("insert into menu (title, icon, hide, url) values ('$title', '$icon', '$hide', '$url')")->execute();
@@ -22,10 +22,10 @@ if ( isset($_POST['edit_menu']) ) {
     $id	    = $_POST['id'];
     $title  = $_POST['title'];
     $icon  = $_POST['icon'];
-    $hide  = $_POST['hide'];
+    $hide  = isset($_POST['hide']) ? $_POST['hide'] : 0;
     $url    = $_POST['url'];
     
-    $res = $db->prepare("update menu set title='$title', icon='$icon',hide='$hide', url='$url' where id='$id'")->execute();
+    $res = $db->prepare("update menu set title='$title', icon='$icon', hide='$hide', url='$url' where id='$id'")->execute();
     if ($res) {
 	print_message(1, '修改菜单成功！');
     } else {

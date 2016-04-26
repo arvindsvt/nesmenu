@@ -14,7 +14,7 @@ $menu = getMenu();
 <body>
 
 <div class="container">
-    
+
     <!-- 菜单 -->
     <div class="row">
 	<div class="col-md-8">  
@@ -27,6 +27,16 @@ $menu = getMenu();
 		<p id="success-indicator" style="display:none; margin-right: 10px;">
 		    <span class="glyphicon glyphicon-ok"></span>顺序更改成功
 		</p>
+                
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
+                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                  <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                      这事内容
+                    </div>
+                  </div>
+                </div>
+                
 	    </div>
 	</div>
 	<div class="col-md-4">
@@ -67,7 +77,7 @@ $menu = getMenu();
                         <div class="form-group">
 			    <label for="hide" class="col-lg-2 control-label"></label>
 			    <div class="col-lg-10">
-                                <input type="checkbox" name="hide" value="0" class="checkbox-inline" />隐藏
+                                <input type="checkbox" name="hide" value="1" class="checkbox-inline" />隐藏
 			    </div>
 			</div>
 		    </div>
@@ -115,9 +125,9 @@ $menu = getMenu();
                     <div class="form-group">
 			    <label for="hide" class="col-lg-2 control-label"></label>
 			    <div class="col-lg-10">
-                                <input type="checkbox" name="hide" value="0" class="checkbox-inline" />隐藏
+                                <input type="checkbox" name="hide" value="1" class="checkbox-inline" />隐藏
 			    </div>
-			</div>
+                    </div>
 		    <div class="modal-footer">
 			<span class="success-msg text-success" style="display:none;"></span>
 			<span class="fail-msg text-danger" style="display:none;"></span>
@@ -190,7 +200,7 @@ $(function() {
 	      rootOrder:JSON.stringify(rootOrder) 
 	  }, 
 	  function(data) {
-//              $("li[data-id='"+details.destId +"']").attr({'data-content':data.message, 'data-toggle':"popover"}).popover();
+              $("li[data-id='"+details.destId +"']").attr({'data-content':data.message, 'data-toggle':"popover"}).popover();
 	  })
 	 .done(function() { 
 	    $( "#success-indicator" ).fadeIn(100).delay(1000).fadeOut();
@@ -228,21 +238,11 @@ $(function() {
 	  e.preventDefault();
 	  var menu = JSON.parse( $(this).attr('rel') );
 	  $.each(menu, function(key, value) {
-	      $('#editModal').find('input[type=text][name='+key+']').val(value);
+	      $('#editModal').find('input[type!=checkbox][name='+key+']').val(value);
               $('#editModal').find('input[type=checkbox][name='+key+']').attr('checked', (value==1)?true:false);
 	  });
     });
-
-    // 复选框
-    $('input[type=checkbox]').click(function(){
-        var self = $(this);
-        if ( self.is(':checked') === true) {
-            self.val(1);
-        } else {
-            self.val(0);
-        }
-        
-    });
+    
 });
 </script>
 
