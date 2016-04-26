@@ -70,8 +70,9 @@ if ( isset($_POST['source']) )
         $statement->bindParam(':id', $id);
         $statement->execute();
     }
-    
-    print_message(1, '顺序更改成功！');
+
+    print_message(1, '更改成功！');
+
 }
 
 /**

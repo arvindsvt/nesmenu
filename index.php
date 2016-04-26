@@ -23,25 +23,6 @@ $menu = getMenu();
 		<div class="dd" id="nestable">
 		    <?php echo $menu; ?>
 		</div>
-
-		<p id="success-indicator" style="display:none; margin-right: 10px;">
-		    <span class="glyphicon glyphicon-ok"></span>顺序更改成功
-		</p>
-                
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
-                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-                  <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                      这事内容
-                    </div>
-                  </div>
-                </div>
-                
-	    </div>
-	</div>
-	<div class="col-md-4">
-	    <div class="well">
-		<p>拖动菜单来调整顺序</p>
 	    </div>
 	</div>
     </div>
@@ -82,8 +63,7 @@ $menu = getMenu();
 			</div>
 		    </div>
 		    <div class="modal-footer">
-			<span class="success-msg text-success" style="display:none;"></span>
-			<span class="fail-msg text-danger" style="display:none;"></span>
+			<span class="prompt-msg text-danger" style="display:none;"></span>
 			<input type="hidden" name="add_menu" value="true" />
 			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 			<button type="submit" class="btn btn-primary">创建</button>
@@ -129,8 +109,7 @@ $menu = getMenu();
 			    </div>
                     </div>
 		    <div class="modal-footer">
-			<span class="success-msg text-success" style="display:none;"></span>
-			<span class="fail-msg text-danger" style="display:none;"></span>
+			<span class="prompt-msg text-danger" style="display:none;"></span>
 			<input type="hidden" name="id" value="" />
 			<input type="hidden" name="edit_menu" value="true" />
 			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -154,8 +133,7 @@ $menu = getMenu();
 			<p>确认删除该菜单项吗？</p>
 		    </div>
 		    <div class="modal-footer">
-			<span class="success-msg text-success" style="display:none;"></span>
-			<span class="fail-msg text-danger" style="display:none;"></span>
+			<span class="prompt-msg text-danger" style="display:none;"></span>
 			<input type="hidden" name="id" value="" />
 			<input type="hidden" name="delete_menu" value="true" />
 			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -174,10 +152,11 @@ $menu = getMenu();
 
 <script type="text/javascript">
 $(function() {
-    
+    // 提交链接
     var submit_url = 'save.php';
     
-    $('.dd').nestable({ 
+    // 更改顺序和父目录时处理
+    $('.dd').nestable({
       dropCallback: function(details) {
 
 	 var order = new Array();
@@ -192,22 +171,23 @@ $(function() {
 	  });
 	 }
 
-	 $.post(submit_url, 
-	  {
-	      source : details.sourceId,
-	      destination: details.destId,
-	      order:JSON.stringify(order),
-	      rootOrder:JSON.stringify(rootOrder) 
-	  }, 
-	  function(data) {
-              $("li[data-id='"+details.destId +"']").attr({'data-content':data.message, 'data-toggle':"popover"}).popover();
-	  })
-	 .done(function() { 
-	    $( "#success-indicator" ).fadeIn(100).delay(1000).fadeOut();
-	 })
-	 .fail(function() {  })
-	 .always(function() { 
-	  });
+	 $.post(
+                submit_url,
+                {
+                    source : details.sourceId,
+                    destination: details.destId,
+                    order:JSON.stringify(order),
+                    rootOrder:JSON.stringify(rootOrder)
+                },
+                function(result) {
+                    var node = $("li[data-id='"+ details.sourceId +"']").find(".pull-right");
+                    var indicator = $("<span class='tips-msg'>" + result.message + "</span>");
+                    indicator.insertBefore(node).fadeIn(100).delay(1000).fadeOut();
+                },
+                'json').fail(function(result){
+                    alert("失败：" + result.status + "：" + result.message);
+                    return ;
+                });
        }
      });
 
@@ -216,15 +196,21 @@ $(function() {
 	e.preventDefault();
 	var form = $(this);
 	
-	$.post(submit_url, form.serialize(), function(result){
-	    if (result.status) {
-		form.find(".success-msg").html(result.message).fadeIn(100).delay(1000).fadeOut();
-		setTimeout(function(){location.reload();}, 1000);
-	    } else {
-		form.find(".fail-msg").html(result.message).fadeIn(100).delay(1000).fadeOut();
-		return;
-	    }
-	}, 'json').fail(function(result){alert("失败：" + result.status + "：" + result.message);return ;});
+	$.post(
+                submit_url,
+                form.serialize(),
+                function(result){
+                    form.find(".prompt-msg").html(result.message).fadeIn(100).delay(1000).fadeOut();
+                    if (result.status) {
+                        setTimeout(function(){location.reload();}, 1000);
+                    } else {
+                        return;
+                    }
+                },
+                'json').fail(function(result){
+                    alert("失败：" + result.status + "：" + result.message);
+                    return ;
+                });
     });
 
     // 点击编辑按钮时，加载 要删除的menu id
