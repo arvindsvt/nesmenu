@@ -120,12 +120,15 @@ function buildMenu($menu, $parentid = 0)
       
     if ($item['pid'] == $parentid) {
 	$item_json = json_encode($item);
+        $hide_node = $item['hide'] ? '[隐藏]' : '';
 	$result .= "<li class='dd-item nested-list-item' data-order='{$item['sort']}' data-id='{$item['id']}'>
       <div class='dd-handle nested-list-handle'>
 	<span class='glyphicon glyphicon-move'></span>
       </div>
-      <div class='nested-list-content'>{$item['title']}
-	<div class='pull-right'><span class='tip-hide'>[隐藏]</span>
+      <div class='nested-list-content'>
+        {$item['title']}
+        <span class='tip-msg'></span>
+	<div class='pull-right'><span class='tip-hide'>{$hide_node}</span>
 	  <a href='#editModal' class='edit_toggle' rel='{$item_json}'  data-toggle='modal'>编辑</a> |
 	  <a href='#deleteModal' class='delete_toggle' rel='{$item['id']}' data-toggle='modal'>删除</a>
 	</div>

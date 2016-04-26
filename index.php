@@ -185,9 +185,12 @@ $(function() {
                         order: JSON.stringify(order)
                     },
                     function(result) {
-                        var node = $("li[data-id='"+ details.sourceId +"']").find(".pull-right");
-                        var indicator = $("<span class='tip-msg'>" + result.message + "</span>");
-                        indicator.insertBefore(node).fadeIn(100).delay(1000).fadeOut();
+                        $("li[data-id='"+ details.sourceId +"']")
+                                .find(".tip-msg")
+                                .html(result.message)
+                                .fadeIn(100)
+                                .delay(1000)
+                                .fadeOut();
                     },
                     'json'
             ).fail(function(result){
