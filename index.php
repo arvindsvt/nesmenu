@@ -6,7 +6,7 @@ $menu = getMenu();
 <html>
 <head>
   <meta charset="utf-8">
-  <title>OK!</title>
+  <title>NesMenu!</title>
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/css/nestable.css" rel="stylesheet">
   <style type="text/css">
