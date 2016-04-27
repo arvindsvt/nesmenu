@@ -36,7 +36,7 @@ $menu = getMenu();
     <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 	    <div class="modal-content">
-		<form action="" class="form-horizontal" role="form">
+                <form action="save.php?action=add" class="form-horizontal" role="form">
 		    <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h4 class="modal-title">新建菜单</h4>
@@ -69,7 +69,6 @@ $menu = getMenu();
 		    </div>
 		    <div class="modal-footer">
 			<span class="prompt-msg text-danger" style="display:none;"></span>
-			<input type="hidden" name="add_menu" value="true" />
 			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 			<button type="submit" class="btn btn-primary">创建</button>
 		    </div>
@@ -82,7 +81,7 @@ $menu = getMenu();
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 	    <div class="modal-content">
-		<form action="" class="form-horizontal" role="form">
+                <form action="save.php?action=edit" class="form-horizontal" role="form">
 		    <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h4 class="modal-title">编辑菜单</h4>
@@ -116,7 +115,6 @@ $menu = getMenu();
 		    <div class="modal-footer">
 			<span class="prompt-msg text-danger" style="display:none;"></span>
 			<input type="hidden" name="id" value="" />
-			<input type="hidden" name="edit_menu" value="true" />
 			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 			<button type="submit" class="btn btn-primary">保存</button>
 		    </div>
@@ -129,7 +127,7 @@ $menu = getMenu();
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 	    <div class="modal-content">
-		<form action="" method="post">
+                <form action="save.php?action=delete" method="post">
 		    <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h4 class="modal-title">确定删除</h4>
@@ -140,7 +138,6 @@ $menu = getMenu();
 		    <div class="modal-footer">
 			<span class="prompt-msg text-danger" style="display:none;"></span>
 			<input type="hidden" name="id" value="" />
-			<input type="hidden" name="delete_menu" value="true" />
 			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 			<input type="submit" class="btn btn-danger" value="删除" />
 		    </div>
@@ -205,6 +202,7 @@ $(function() {
     $('form').on('submit', function(e){
 	e.preventDefault();
 	var form = $(this);
+        var submit_url = form.attr('action');
 	
 	$.post(
                 submit_url,

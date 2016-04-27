@@ -1,8 +1,9 @@
 ﻿<?php
 $db = new PDO("mysql:host=localhost;dbname=shop;charset=utf8", "root", "root");
+$action = isset($_GET['action']) ? $_GET['action'] : '';
 
 // 添加菜单
-if (isset($_POST['add_menu'])) {
+if ($action == 'add') {
     $title  = $_POST['title'];
     $icon  = $_POST['icon'];
     $hide  = isset($_POST['hide']) ? $_POST['hide'] : 0;
@@ -19,7 +20,7 @@ if (isset($_POST['add_menu'])) {
 }
 
 // 编辑菜单
-if ( isset($_POST['edit_menu']) ) {
+if ($action == 'edit') {
     $id	    = $_POST['id'];
     $title  = $_POST['title'];
     $icon  = $_POST['icon'];
@@ -32,12 +33,12 @@ if ( isset($_POST['edit_menu']) ) {
     if ($statement->rowCount()) {
 	print_message(1, '修改菜单成功！');
     } else {
-	print_message(0, '修改菜单失败！');
+	print_message(0, '未作任何修改，或修改失败！');
     }
 }
 
 // 删除菜单
-if ( isset($_POST['delete_menu']) ) {
+if ($action == 'delete') {
     $id = $_POST['id'];
     
     $res = $db->query("select * from menu where pid='$id'")->fetch(PDO::FETCH_ASSOC);
