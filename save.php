@@ -57,7 +57,7 @@ if ($action == 'delete') {
 }
 
 // 拖动编辑，ajax处理
-if ( isset($_POST['source']) )
+if ( $action == 'drag' )
 {
     $source         = $_POST['source'];
     $destination    = isset($_POST['destination']) ? $_POST['destination'] : 0;
@@ -122,7 +122,7 @@ function buildMenu($menu, $parentid = 0)
     if ($item['pid'] == $parentid) {
 	$item_json = json_encode($item);
         $hide_node = $item['hide'] ? '[隐藏]' : '';
-	$result .= "<li class='dd-item nested-list-item' data-order='{$item['sort']}' data-id='{$item['id']}'>
+	$result .= "<li class='dd-item nested-list-item' data-id='{$item['id']}'>
       <div class='dd-handle nested-list-handle'>
 	<span class='glyphicon glyphicon-move'></span>
       </div>

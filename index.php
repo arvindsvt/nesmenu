@@ -154,9 +154,7 @@ $menu = getMenu();
 
 <script type="text/javascript">   
 $(function() {
-    // 提交链接
-    var submit_url = 'save.php';
-    
+ 
     // 更改顺序和父目录时处理
     $('.dd').nestable({
         maxDepth: 5,
@@ -175,7 +173,7 @@ $(function() {
             }
 
             $.post(
-                    submit_url,
+                    'save.php?action=drag',
                     {
                         source : details.sourceId,
                         destination: details.destId,
