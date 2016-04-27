@@ -8,8 +8,7 @@ $menu = getMenu();
   <meta charset="utf-8">
   <title>OK!</title>
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
-  <link href="static/css/styles.css" rel="stylesheet">
-  <link href="static/vendor/nestable/nestable.css" rel="stylesheet">
+  <link href="static/css/nestable.css" rel="stylesheet">
   <style type="text/css">
     .tip-hide, .tip-msg {font-size: 0.5em;margin-left: 5px;color: #999;font-weight: 100; }
     .tip-msg {color: #449d44}
@@ -19,11 +18,11 @@ $menu = getMenu();
 
 <div class="container">
 
-    <!-- 菜单 -->
+    <!-- MENU -->
     <div class="row">
 	<div class="col-md-8">  
 	    <div class="well">
-                <p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal">新建菜单</a> 菜单：</p>
+                <p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal">Add Menu</a> Menu: </p>
 		<div class="dd" id="nestable">
 		    <?php echo $menu; ?>
 		</div>
@@ -31,24 +30,24 @@ $menu = getMenu();
 	</div>
     </div>
 
-    <!-- 新建框 -->
+    <!-- New menu dialog -->
     <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 	    <div class="modal-content">
                 <form action="save.php?action=add" class="form-horizontal" role="form">
 		    <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title">新建菜单</h4>
+			<h4 class="modal-title">New Menu</h4>
 		    </div>
 		    <div class="modal-body">
 			<div class="form-group">
-			    <label for="title" class="col-lg-2 control-label">标题</label>
+			    <label for="title" class="col-lg-2 control-label">Title</label>
 			    <div class="col-lg-10">
 				<input type="text" name="title" value="" class="form-control" />
 			    </div>
 			</div>
 			<div class="form-group">
-			    <label for="icon" class="col-lg-2 control-label">图标</label>
+			    <label for="icon" class="col-lg-2 control-label">Icon</label>
 			    <div class="col-lg-10">
 				<input type="text" name="icon" value="" class="form-control" />
 			    </div>
@@ -62,38 +61,38 @@ $menu = getMenu();
                         <div class="form-group">
 			    <label for="hide" class="col-lg-2 control-label"></label>
 			    <div class="col-lg-10">
-                                <input type="checkbox" name="hide" value="1" class="checkbox-inline" />隐藏
+                                <input type="checkbox" name="hide" value="1" class="checkbox-inline" />Hide
 			    </div>
 			</div>
 		    </div>
 		    <div class="modal-footer">
 			<span class="prompt-msg text-danger" style="display:none;"></span>
-			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-			<button type="submit" class="btn btn-primary">创建</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancle</button>
+			<button type="submit" class="btn btn-primary">Create</button>
 		    </div>
 		</form>
 	    </div>
 	</div>
     </div>
   
-    <!-- 编辑框 -->
+    <!-- Edite Menu dialog -->
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 	    <div class="modal-content">
                 <form action="save.php?action=edit" class="form-horizontal" role="form">
 		    <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title">编辑菜单</h4>
+			<h4 class="modal-title">Edit Menu</h4>
 		    </div>
 		    <div class="modal-body">
 			<div class="form-group">
-			    <label for="title" class="col-lg-2 control-label">标题</label>
+			    <label for="title" class="col-lg-2 control-label">Title</label>
 			    <div class="col-lg-10">
 				<input type="text" name="title" value="" class="form-control" />
 			    </div>
 			</div>
 			<div class="form-group">
-			    <label for="icon" class="col-lg-2 control-label">图标</label>
+			    <label for="icon" class="col-lg-2 control-label">Icion</label>
 			    <div class="col-lg-10">
 				<input type="text" name="icon" value="" class="form-control" />
 			    </div>
@@ -108,37 +107,37 @@ $menu = getMenu();
                     <div class="form-group">
 			    <label for="hide" class="col-lg-2 control-label"></label>
 			    <div class="col-lg-10">
-                                <input type="checkbox" name="hide" value="1" class="checkbox-inline" />隐藏
+                                <input type="checkbox" name="hide" value="1" class="checkbox-inline" />Hide
 			    </div>
                     </div>
 		    <div class="modal-footer">
 			<span class="prompt-msg text-danger" style="display:none;"></span>
 			<input type="hidden" name="id" value="" />
-			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-			<button type="submit" class="btn btn-primary">保存</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancle</button>
+			<button type="submit" class="btn btn-primary">Save</button>
 		    </div>
 		</form>
 	    </div>
 	</div>
     </div>
   
-    <!-- 删除框 -->
+    <!-- Delete Menu dialog -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 	    <div class="modal-content">
                 <form action="save.php?action=delete" method="post">
 		    <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title">确定删除</h4>
+			<h4 class="modal-title">Comfirm</h4>
 		    </div>
 		    <div class="modal-body">
-			<p>确认删除该菜单项吗？</p>
+			<p>Are you sure delete this menu?</p>
 		    </div>
 		    <div class="modal-footer">
 			<span class="prompt-msg text-danger" style="display:none;"></span>
 			<input type="hidden" name="id" value="" />
-			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-			<input type="submit" class="btn btn-danger" value="删除" />
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancle</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
 		    </div>
 		</form>
 	    </div>
@@ -149,12 +148,12 @@ $menu = getMenu();
 
 <script type="text/javascript" src='static/js/jquery-1.10.2.min.js'></script>
 <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
-<script type="text/javascript" src='static/vendor/nestable/jquery.nestable.js'></script>
+<script type="text/javascript" src='static/js/jquery.nestable.js'></script>
 
 <script type="text/javascript">   
 $(function() {
  
-    // 更改顺序和父目录时处理
+    // Process on drag
     $('.dd').nestable({
         maxDepth: 5,
         dropCallback: function(details) {
@@ -171,7 +170,7 @@ $(function() {
                 });
             }
             
-            // 如果数据没有更改，则不提交ajax
+            // don't post if nothing changed
             var data_id = window.location.hostname + '.nestable';
             var drag_data = JSON.stringify($('.dd').nestable('serialize'));
             var storage_data = localStorage.getItem(data_id);
@@ -180,7 +179,7 @@ $(function() {
             }
             localStorage.setItem(data_id, drag_data);
             
-            // AJAX提交拖动的数据
+            // post data by ajax
             $.post(
                     'save.php?action=drag',
                     {
@@ -199,13 +198,13 @@ $(function() {
                     },
                     'json'
             ).fail(function(result){
-                alert("失败：" + result.status + "：" + result.message);
+                alert("Failed: " + result.status + "：" + result.message);
                 return ;
             });
         }
      });
 
-    // 新建、修改、删除功能通过Ajax提交
+    // Post by ajax on Create, Edit and Delte
     $('form').on('submit', function(e){
 	e.preventDefault();
 	var form = $(this);
@@ -224,18 +223,18 @@ $(function() {
                 },
                 'json'
         ).fail(function(result){
-            alert("失败：" + result.status + "：" + result.message);
+            alert("Failed: " + result.status + "：" + result.message);
             return ;
         });
     });
 
-    // 点击编辑按钮时，加载要删除的menu id
+    // load menu id when click delete link
     $('.delete_toggle').click(function(e){
 	e.preventDefault();
 	$('#deleteModal').find('input[name=id]').val( $(this).attr('rel') );
     });
 
-    // 点击编辑按钮时，加载menu数据
+    // load input value when click edit link
     $('.edit_toggle').click(function(e){
 	  e.preventDefault();
 	  var menu = JSON.parse( $(this).attr('rel') );

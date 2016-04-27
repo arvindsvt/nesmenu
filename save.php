@@ -2,7 +2,7 @@
 $db = new PDO("mysql:host=localhost;dbname=shop;charset=utf8", "root", "root");
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-// 添加菜单
+// Add
 if ($action == 'add') {
     $title  = $_POST['title'];
     $icon  = $_POST['icon'];
@@ -13,13 +13,13 @@ if ($action == 'add') {
     $statement->execute();
 
     if ($statement->rowCount()) {
-	print_message(1, '添加菜单成功！');
+	print_message(1, 'Add Successfully!');
     } else {
-	print_message(0, '添加菜单失败！');
+	print_message(0, 'Add Failed!');
     }
 }
 
-// 编辑菜单
+// Edit
 if ($action == 'edit') {
     $id	    = $_POST['id'];
     $title  = $_POST['title'];
@@ -31,32 +31,32 @@ if ($action == 'edit') {
     $statement->execute();
     
     if ($statement->rowCount()) {
-	print_message(1, '修改菜单成功！');
+	print_message(1, 'Edit Successfully!');
     } else {
-	print_message(0, '未作任何修改，或修改失败！');
+	print_message(0, 'Nothing modification or Edit Failed!');
     }
 }
 
-// 删除菜单
+// Delete
 if ($action == 'delete') {
     $id = $_POST['id'];
     
     $res = $db->query("select * from menu where pid='$id'")->fetch(PDO::FETCH_ASSOC);
     if ($res) {
-	print_message(0, '菜单下有子菜单，无法删除！');
+	print_message(0, 'Cannot delete menu with submenu!');
     }
     
     $statement = $db->prepare("delete from menu where id='$id'");
     $statement->execute();
     
     if ($statement->rowCount()) {
-	print_message(1, '删除菜单成功！');
+	print_message(1, 'Delete Successfully!');
     } else {
-	print_message(0, '删除菜单失败！');
+	print_message(0, 'Delete Failed!');
     }
 }
 
-// 拖动编辑，ajax处理
+// Drag
 if ( $action == 'drag' )
 {
     $source         = $_POST['source'];
@@ -76,17 +76,13 @@ if ( $action == 'drag' )
     $affect2 = $statement2->rowCount();
     
     if (!$affect && !$affect2) {
-        print_message(0, '未做更改！');
+        print_message(0, 'Nothing Modification!');
     } else {
-        print_message(1, '更改成功！');
+        print_message(1, 'Successfully!');
     }
 }
 
-/**
- * 返回 ajax 数据
- * @param bool $status 状态，0-失败，1-成功
- * @param string $message 提示信息
- */
+// Return message to ajax
 function print_message($status = 0, $message = '')
 {
     $prompt = array('status' => $status, 'message' => $message);
@@ -95,11 +91,7 @@ function print_message($status = 0, $message = '')
     exit;
 }
 
-/**
- * 从数据库获取menu数据，并递归调用buildMenu生成菜单
- * @global PDO $db
- * @return type
- */
+// get menu data from db
 function getMenu()
 {
     global $db;
@@ -108,12 +100,7 @@ function getMenu()
     return buildMenu($res);
 }
 
-/**
- * 构造菜单
- * @param type $menu
- * @param type $parentid
- * @return type
- */
+// create menu
 function buildMenu($menu, $parentid = 0) 
 { 
   $result = null;
@@ -121,18 +108,15 @@ function buildMenu($menu, $parentid = 0)
       
     if ($item['pid'] == $parentid) {
 	$item_json = json_encode($item);
-        $hide_node = $item['hide'] ? '[隐藏]' : '';
+        $hide_node = $item['hide'] ? '[Hidden]' : '';
 	$result .= "<li class='dd-item nested-list-item' data-id='{$item['id']}'>
-      <div class='dd-handle nested-list-handle'>
-	
-      </div>
-      <div class='nested-list-content'>
-        {$item['title']}
+      <div class='dd-handle nested-list-handle'></div>
+      <div class='nested-list-content'>{$item['title']}
         <span class='tip-msg'></span>
-	<div class='pull-right'><span class='tip-hide'>{$hide_node}</span>
-	  <a href='#editModal' class='edit_toggle' rel='{$item_json}'  data-toggle='modal'>编辑</a> |
-	  <a href='#deleteModal' class='delete_toggle' rel='{$item['id']}' data-toggle='modal'>删除</a>
-	</div>
+        <div class='pull-right'><span class='tip-hide'>{$hide_node}</span>
+            <a href='#editModal' class='edit_toggle' rel='{$item_json}'  data-toggle='modal'>Edit</a> |
+            <a href='#deleteModal' class='delete_toggle' rel='{$item['id']}' data-toggle='modal'>Delete</a>
+        </div>
       </div>" . buildMenu($menu, $item['id']) . "</li>";
     } 
   return $result ?  "\n<ol class=\"dd-list\">\n$result</ol>\n" : null;
