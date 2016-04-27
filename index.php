@@ -23,8 +23,7 @@ $menu = getMenu();
     <div class="row">
 	<div class="col-md-8">  
 	    <div class="well">
-		<p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal"><span class="glyphicon glyphicon-plus-sign"></span>新建菜单</a> 菜单：</p>
-                <p id="ppp"></p>
+                <p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal">新建菜单</a> 菜单：</p>
 		<div class="dd" id="nestable">
 		    <?php echo $menu; ?>
 		</div>
@@ -171,7 +170,17 @@ $(function() {
                     order[index] = $(elem).attr('data-id');
                 });
             }
-
+            
+            // 如果数据没有更改，则不提交ajax
+            var data_id = window.location.hostname + '.nestable';
+            var drag_data = JSON.stringify($('.dd').nestable('serialize'));
+            var storage_data = localStorage.getItem(data_id);
+            if (drag_data === storage_data) {
+                return false;
+            }
+            localStorage.setItem(data_id, drag_data);
+            
+            // AJAX提交拖动的数据
             $.post(
                     'save.php?action=drag',
                     {
@@ -220,7 +229,7 @@ $(function() {
         });
     });
 
-    // 点击编辑按钮时，加载 要删除的menu id
+    // 点击编辑按钮时，加载要删除的menu id
     $('.delete_toggle').click(function(e){
 	e.preventDefault();
 	$('#deleteModal').find('input[name=id]').val( $(this).attr('rel') );

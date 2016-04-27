@@ -124,7 +124,7 @@ function buildMenu($menu, $parentid = 0)
         $hide_node = $item['hide'] ? '[隐藏]' : '';
 	$result .= "<li class='dd-item nested-list-item' data-id='{$item['id']}'>
       <div class='dd-handle nested-list-handle'>
-	<span class='glyphicon glyphicon-move'></span>
+	
       </div>
       <div class='nested-list-content'>
         {$item['title']}
