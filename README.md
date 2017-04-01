@@ -1,17 +1,15 @@
 # Profile
-Nesmenu: Nestable + Bootstrap  Admin Menu like Wordpress with PHP+MySQL
+Nesmenu: Nestable + Bootstrap  Admin Menu like Wordpress with PHP+JSON.
+
+Also, you can translate it to PHP+MYSQL easily.
 
 # Demo
+[View Demo]()
 ![Demo Image](https://github.com/yeszao/nesmenu/raw/master/snapshot.png)
 
 
 # Usage
 - Download source code from github;
-- Import "**nesmenu.sql**" to your database;
-- Open **save.php**, modify the database information to match your database:
-```
-  $db = new PDO("mysql:host=localhost;dbname=shop;charset=utf8", "root", "root");
-```
 - Access the URL in your browser;
 - Done.
 

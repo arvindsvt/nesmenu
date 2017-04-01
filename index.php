@@ -22,7 +22,10 @@ $menu = getMenu();
     <div class="row">
 	<div class="col-md-8">  
 	    <div class="well">
-                <p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal">Add Menu</a> Menu: </p>
+                <p class="lead">
+					<a href="#newModal" class="btn btn-default pull-right" data-toggle="modal">Add Menu</a>
+					Menu: <?php echo getCount(); ?>
+				</p>
 		<div class="dd" id="nestable">
 		    <?php echo $menu; ?>
 		</div>
@@ -183,9 +186,9 @@ $(function() {
             $.post(
                     'save.php?action=drag',
                     {
-                        source : details.sourceId,
-                        destination: details.destId,
-                        order: JSON.stringify(order)
+                        sourceId : details.sourceId,
+                        destinationId: details.destId,
+                        order: order
                     },
                     function(result) {
                         $("li[data-id='"+ details.sourceId +"']")
