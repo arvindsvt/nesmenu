@@ -29,7 +29,7 @@ if ($action == 'add') {
     if ($res) {
         print_message(1, 'Add Successfully!');
     } else {
-        print_message(0, $json->error);
+        print_message(0, $json->getError());
     }
 }
 
@@ -42,7 +42,7 @@ if ($action == 'edit') {
     if ($json->update($data)) {
         print_message(1, 'Edit Successfully!');
     } else {
-        print_message(0, $json->error);
+        print_message(0, $json->getError());
     }
 }
 
