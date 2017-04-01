@@ -4,7 +4,8 @@ Nesmenu: Nestable + Bootstrap  Admin Menu like Wordpress with PHP+JSON.
 Also, you can translate it to PHP+MYSQL easily.
 
 # Demo
-[View Demo]()
+[View Demo](http://www.awaimai.com/demo/nesmenu/)
+
 ![Demo Image](https://github.com/yeszao/nesmenu/raw/master/snapshot.png)
 
 
