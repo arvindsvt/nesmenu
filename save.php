@@ -5,6 +5,7 @@ require 'JsonDb/JsonDb.php';
 $json = new JsonDb('menus');
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+// Get $_POST variable function
 function getPost($keys, $default = null)
 {
     if (!is_array($keys)) {
