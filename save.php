@@ -1,6 +1,7 @@
 <?php
 require 'JsonDb/JsonDb.php';
 
+// Use menus.json as database
 $json = new JsonDb('menus');
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
